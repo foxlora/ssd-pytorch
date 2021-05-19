@@ -168,7 +168,7 @@ if __name__ == "__main__":
         net = torch.nn.DataParallel(model)
         cudnn.benchmark = True
         net = net.cuda()
-
+    print(model)
     #------------------------------------------------------#
     #   主干特征提取网络特征通用，冻结训练可以加快训练速度
     #   也可以在训练初期防止权值被破坏。
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     if True:
         lr = 5e-4
-        Batch_size = 16
+        Batch_size = 1
         Init_Epoch = 0
         Freeze_Epoch = 50
 
@@ -188,11 +188,11 @@ if __name__ == "__main__":
 
         if Use_Data_Loader:
             train_dataset = SSDDataset(lines[:num_train], (Config["min_dim"], Config["min_dim"]), True)
-            gen = DataLoader(train_dataset, shuffle=True, batch_size=Batch_size, num_workers=4, pin_memory=True,
+            gen = DataLoader(train_dataset, shuffle=True, batch_size=Batch_size, num_workers=8, pin_memory=True,
                                     drop_last=True, collate_fn=ssd_dataset_collate)
 
             val_dataset = SSDDataset(lines[num_train:], (Config["min_dim"], Config["min_dim"]), False)
-            gen_val = DataLoader(val_dataset, shuffle=True, batch_size=Batch_size, num_workers=4, pin_memory=True,
+            gen_val = DataLoader(val_dataset, shuffle=True, batch_size=Batch_size, num_workers=8, pin_memory=True,
                                     drop_last=True, collate_fn=ssd_dataset_collate)
         else:
             gen = Generator(Batch_size, lines[:num_train], (Config["min_dim"], Config["min_dim"]), Config["num_classes"]).generate(True)
